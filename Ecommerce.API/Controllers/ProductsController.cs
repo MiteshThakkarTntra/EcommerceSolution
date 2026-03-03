@@ -1,20 +1,34 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Ecommerce.API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController(ProductService productService) : ControllerBase
+    [Route("api/[controller]")]
+    public class ProductsController : ControllerBase
     {
+        private readonly ProductService _service;
 
-        private readonly ProductService _productService = productService;
+        public ProductsController(ProductService service)
+        {
+            _service = service;
+        }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var products = _productService.GetProduct();
+            var products = await _service.GetAllAsync();
             return Ok(products);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Product product)
+        {
+            var created = await _service.AddAsync(product);
+            return Ok(created);
+        }
+
     }
 }
